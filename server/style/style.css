@@ -1,0 +1,89 @@
+body{
+    height: 100vh;
+    margin: 0;
+    font-family: 'Courier New', monospace !important;
+}
+/* Aggiungi regole CSS qui */
+
+/* Navbar */
+.navbar {
+    background-color: #f8f9fa; /* Cambia il colore dello sfondo della navbar */
+  }
+  
+  .navbar-brand {
+    color: #343a40; /* Cambia il colore del testo del brand della navbar */
+  }
+  
+  .nav-link {
+    color: #343a40 !important; /* Cambia il colore del testo dei link della navbar */
+  }
+  
+  /* Header */
+  header {
+    background-color: #343a40; /* Cambia il colore dello sfondo dell'header */
+    color: #ffffff; /* Cambia il colore del testo dell'header */
+    padding: 10px 0; /* Aggiungi spazio interno all'header */
+    text-align: center; /* Centra il testo nell'header */
+  }
+  
+  /* Footer */
+  footer {
+    background-color: #343a40; /* Cambia il colore dello sfondo del footer */
+    color: #ffffff; /* Cambia il colore del testo del footer */
+    padding: 10px 0; /* Aggiungi spazio interno al footer */
+    text-align: center; /* Centra il testo nel footer */
+  }
+  
+  /* Access Box (per le pagine di login e registrazione) */
+  .accessBox {
+    background-color: #ffffff; /* Cambia il colore dello sfondo della box di accesso */
+    border: 1px solid #dee2e6; /* Aggiungi bordo alla box di accesso */
+    border-radius: 5px; /* Arrotonda gli angoli della box di accesso */
+    padding: 20px; /* Aggiungi spazio interno alla box di accesso */
+  }
+  
+  /* Form */
+  form {
+    margin-top: 20px; /* Aggiungi margine superiore al form */
+  }
+  
+  /* Input */
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  select {
+    width: 100%; /* Rendi gli input e i select larghi quanto la loro container */
+    padding: 10px; /* Aggiungi spazio interno agli input e ai select */
+    margin-bottom: 10px; /* Aggiungi margine inferiore agli input e ai select */
+    border-radius: 5px; /* Arrotonda gli angoli degli input e dei select */
+    border: 1px solid #ced4da; /* Aggiungi bordo agli input e ai select */
+  }
+  
+  /* Submit Button */
+  input[type="submit"],
+  button {
+    background-color: #007bff; /* Cambia il colore di sfondo dei pulsanti */
+    color: #ffffff; /* Cambia il colore del testo dei pulsanti */
+    border: none; /* Rimuovi il bordo dei pulsanti */
+    border-radius: 5px; /* Arrotonda gli angoli dei pulsanti */
+    padding: 10px 20px; /* Aggiungi spazio interno ai pulsanti */
+    cursor: pointer; /* Cambia il cursore quando si passa sopra il pulsante */
+  }
+  
+  input[type="submit"]:hover,
+  button:hover {
+    background-color: #0056b3; /* Cambia il colore di sfondo dei pulsanti quando passi sopra */
+  }
+  
+  /* Container */
+  .container {
+    max-width: 960px; /* Imposta la larghezza massima del container */
+    margin: 0 auto; /* Centra il container nella pagina */
+    padding: 0 15px; /* Aggiungi spazio interno ai lati del container */
+  }
+  
+  /* Row */
+  .row {
+    margin-bottom: 20px; /* Aggiungi margine inferiore alle righe */
+  }
+  
