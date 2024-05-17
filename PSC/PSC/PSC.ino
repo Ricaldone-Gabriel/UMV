@@ -3,14 +3,24 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 
+#define CE_PIN   12
+#define CSN_PIN 13
+
 ControllerPtr myControllers[BP32_MAX_GAMEPADS];
-RF24 radio(1,3); // CE, CSN
+RF24 radio(CE_PIN,CSN_PIN); // CE, CSN
+const byte Address[5] = {'2','a','p','l','e'};
 
 struct dati{
-  short int angoloServo = 0;
-  short int potenzaMotore = 0;
-}
+  int angoloServo = 90;
+  int potenzaMotore = 0;
+};
+float ackData[3] = {-100,-100,-100};
 
+unsigned long currentMillis;
+unsigned long prevMillis;
+unsigned long txIntervalMillis = 150; // send once per 50 millis
+
+bool newData = false;
 dati datiTrasmessi;
 
 // This callback gets called any time a new gamepad is connected.
@@ -43,6 +53,7 @@ void onDisconnectedController(ControllerPtr ctl) {
             Serial.printf("CALLBACK: Controller disconnected from index=%d\n", i);
             myControllers[i] = nullptr;
             foundController = true;
+            datiTrasmessi.potenzaMotore = 0;
             break;
         }
     }
@@ -77,8 +88,9 @@ void processGamepad(ControllerPtr ctl) {
     // There are different ways to query whether a button is pressed.
     // By query each button individually:
     //  a(), b(), x(), y(), l1(), etc...
-    datiTrasmessi.angoloServo = map(ctl->axisRY(),-511,512,70,110);
-    datiTrasmessi.potenzaMotore = map(ctl->throttle(),0,1023,0,180)  
+    datiTrasmessi.angoloServo = map(ctl->axisRX(),-511,512,70,100);
+    datiTrasmessi.potenzaMotore = map(ctl->throttle(),0,1023,0,180);
+
     if (ctl->y()) {
 
     }
@@ -95,7 +107,7 @@ void processGamepad(ControllerPtr ctl) {
 
     // Another way to query controller data is by getting the buttons() function.
     // See how the different "dump*" functions dump the Controller info.
-    dumpGamepad(ctl);
+    //dumpGamepad(ctl);
 }
 
 void processControllers() {
@@ -131,6 +143,12 @@ void setup() {
     // - Second one, which is a "virtual device", is a mouse.
     // By default, it is disabled.
     BP32.enableVirtualDevice(false);
+
+    radio.begin();
+    radio.setDataRate(RF24_250KBPS);
+    radio.enableAckPayload();
+    radio.setRetries(4, 5);
+    radio.openWritingPipe(Address);
 }
 
 // Arduino loop function. Runs in CPU 1.
@@ -138,14 +156,31 @@ void loop() {
     // This call fetches all the controllers' data.
     // Call this function in your main loop.
     bool dataUpdated = BP32.update();
-    if (dataUpdated)
+    if (dataUpdated) {
         processControllers();
+    }
+    currentMillis = millis();
+    if (currentMillis - prevMillis >= txIntervalMillis) {
+        send();
+    }
 
-    // The main loop must have some kind of "yield to lower priority task" event.
-    // Otherwise, the watchdog will get triggered.
-    // If your main loop doesn't have one, just add a simple `vTaskDelay(1)`.
-    // Detailed info here:
-    // https://stackoverflow.com/questions/66278271/task-watchdog-got-triggered-the-tasks-did-not-reset-the-watchdog-in-time
-
-    //     vTaskDelay(1);
 }
+
+void send() {
+    bool rslt;
+    rslt = radio.write( &datiTrasmessi, sizeof(datiTrasmessi) );
+        // Always use sizeof() as it gives the size as the number of bytes.
+        // For example if dataToSend was an int sizeof() would correctly return 2
+    
+    Serial.println("Data Sent");
+    Serial.println(String(datiTrasmessi.angoloServo) + " " + String(datiTrasmessi.potenzaMotore));
+    Serial.println(String(ackData[0])+ " " + String(ackData[1]) + " " +  String(ackData[2]));
+   
+    if (radio.isAckPayloadAvailable()) {
+      radio.read(&ackData, sizeof(ackData));
+      newData = true;
+    } else {
+      Serial.println("Acknowledge but no data");
+    }
+    prevMillis = millis();
+ }
