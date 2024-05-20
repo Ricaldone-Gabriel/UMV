@@ -18,7 +18,7 @@ float ackData[3] = {-100,-100,-100};
 
 unsigned long currentMillis;
 unsigned long prevMillis;
-unsigned long txIntervalMillis = 150; // send once per 50 millis
+unsigned long txIntervalMillis = 100; // send once per 50 millis
 
 bool newData = false;
 dati datiTrasmessi;
@@ -147,7 +147,7 @@ void setup() {
     radio.begin();
     radio.setDataRate(RF24_250KBPS);
     radio.enableAckPayload();
-    radio.setRetries(4, 5);
+    radio.setRetries(5, 5);
     radio.openWritingPipe(Address);
 }
 
@@ -176,7 +176,7 @@ void send() {
     Serial.println(String(datiTrasmessi.angoloServo) + " " + String(datiTrasmessi.potenzaMotore));
     Serial.println(String(ackData[0])+ " " + String(ackData[1]) + " " +  String(ackData[2]));
    
-    if (radio.isAckPayloadAvailable()) {
+    if (radio.available()) {
       radio.read(&ackData, sizeof(ackData));
       newData = true;
     } else {

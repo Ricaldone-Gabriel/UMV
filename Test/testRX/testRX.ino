@@ -12,7 +12,7 @@ const byte thisSlaveAddress[5] = {'R','x','A','A','A'};
 RF24 radio(CE_PIN, CSN_PIN);
 
 char dataReceived[10]; // this must match dataToSend in the TX
-int ackData[2] = {69,420}; // the two values to be sent to the master
+int ackData[3] = {69,420,666}; // the two values to be sent to the master
 bool newData = false;
 
 //==============
@@ -59,7 +59,9 @@ void showData() {
         Serial.print(" ackPayload sent ");
         Serial.print(ackData[0]);
         Serial.print(", ");
-        Serial.println(ackData[1]);
+        Serial.print(ackData[1]);
+        Serial.print(", ");
+        Serial.println(ackData[2]);
         newData = false;
     }
 }

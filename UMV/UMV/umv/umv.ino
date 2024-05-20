@@ -49,10 +49,10 @@ void loop() {
 //============
 
 void getData() {
-    if ( radio.available() ) {
+    if (radio.available() ) {
         radio.read( &datiRicevuti, sizeof(datiRicevuti) );
         updateReplyData();
-        showData();
+        //showData();
         newData = true;
     }
 }
@@ -72,21 +72,18 @@ void useData() {
 }
 
 //================
-
+/*
 void showData() {
-    if (newData == true) {
-        Serial.print("Data received ");
-        Serial.println(String(datiRicevuti.angoloServo) + " " + String(datiRicevuti.potenzaMotore));
-        Serial.println(" ackPayload sent ");
-        Serial.print(ackData[0]);
-        Serial.print(", ");
-        Serial.print(ackData[1]);
-        Serial.print(", ");
-        Serial.println(ackData[2]);
-        newData = false;
-    }
+  Serial.print("Data received ");
+  Serial.println(String(datiRicevuti.angoloServo) + " " + String(datiRicevuti.potenzaMotore));
+  Serial.println(" ackPayload sent ");
+  Serial.print(ackData[0]);
+  Serial.print(", ");
+  Serial.print(ackData[1]);
+  Serial.print(", ");
+  Serial.println(ackData[2]);  
 }
-
+*/
 //================
 
 void updateReplyData() {

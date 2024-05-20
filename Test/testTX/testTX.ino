@@ -14,12 +14,12 @@ RF24 radio(CE_PIN, CSN_PIN); // Create a Radio
 
 char dataToSend[10] = "Message 0";
 char txNum = '0';
-int ackData[2] = {-1, -1}; // to hold the two values coming from the slave
+int ackData[3] = {-1, -1,-1}; // to hold the two values coming from the slave
 bool newData = false;
 
 unsigned long currentMillis;
 unsigned long prevMillis;
-unsigned long txIntervalMillis = 1000; // send once per second
+unsigned long txIntervalMillis = 100; // send once per second
 
 //===============
 
@@ -81,7 +81,9 @@ void showData() {
         Serial.print("  Acknowledge data ");
         Serial.print(ackData[0]);
         Serial.print(", ");
-        Serial.println(ackData[1]);
+        Serial.print(ackData[1]);
+        Serial.print(", ");
+        Serial.print(ackData[2]);
         Serial.println();
         newData = false;
     }
