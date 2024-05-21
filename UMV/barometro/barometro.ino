@@ -23,11 +23,11 @@ void loop()
 {
   Serial.print("Temperature in Celsius:\t\t");
   Serial.println(bme280.readTempC());
-  delay(1000);
+  delay(10);
   Serial.print(F("Pressure Sensor 1 [hPa]:\t\t")); 
   Serial.println(bme280.readPressure());
-  delay(1000);
+  delay(10);
   Serial.print(F("Altitude Sensor 1 [m]:\t\t\t")); 
   Serial.println(bme280.readAltitudeMeter());
-  delay(1000);
+  delay(10);
 }

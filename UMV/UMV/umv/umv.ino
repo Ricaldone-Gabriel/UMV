@@ -2,11 +2,20 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 #include <ESP32Servo.h>
+#include <Wire.h>
+#include "DHT.h"
+#include "BlueDot_BME280.h"
 
 #define CE_PIN   12
 #define CSN_PIN 13
 #define Sterzo_PIN 14
 #define ESC_PIN 27
+#define SDA_PIN 26
+#define SCL_PIN 25
+#define DHT11PIN 17
+
+BlueDot_BME280 bme280 = BlueDot_BME280();
+DHT dht(DHT11PIN, DHT11);
 Servo ServoSterzo, ESC;
 RF24 radio(CE_PIN, CSN_PIN);
 const byte Address[5] = {'2','a','p','l','e'};
@@ -29,6 +38,19 @@ void setup() {
     ServoSterzo.attach(Sterzo_PIN);
     ESC.attach(ESC_PIN,1000,2000);
     Serial.println("SimpleRxAckPayload Starting");
+    
+    Wire.begin(SDA_PIN, SCL_PIN);
+    bme280.parameter.communication = 0;                  //Choose communication protocol
+    bme280.parameter.I2CAddress = 0x76;                  //Choose I2C Address
+    bme280.parameter.sensorMode = 0b11;                   //Choose sensor mode
+    bme280.parameter.IIRfilter = 0b100;                    //Setup for IIR Filter
+    bme280.parameter.tempOversampling = 0b101;             //Setup Temperature Ovesampling
+    bme280.parameter.pressOversampling = 0b101;  
+    bme280.parameter.pressureSeaLevel = 1013.25; 
+    bme280.parameter.tempOutsideCelsius = 15;              //default value of 15°C
+    bme280.init();
+
+    dht.begin();
 
     radio.begin();
     radio.setDataRate(RF24_250KBPS);
@@ -85,10 +107,10 @@ void showData() {
 }
 */
 //================
-
+//T,H,P
 void updateReplyData() {
-    ackData[0] = ackData[0]+1;
-    ackData[1] = ackData[1]+1;
-    ackData[2] = ackData[2]+1;
+    ackData[0] = bme280.readTempC();
+    ackData[1] = dht.readHumidity();;
+    ackData[2] = bme280.readPressure();
     radio.writeAckPayload(1, &ackData, sizeof(ackData)); // load the payload for the next time
 }

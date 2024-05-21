@@ -18,7 +18,7 @@ float ackData[3] = {-100,-100,-100};
 
 unsigned long currentMillis;
 unsigned long prevMillis;
-unsigned long txIntervalMillis = 100; // send once per 50 millis
+unsigned long txIntervalMillis = 25; // send once per 50 millis
 
 bool newData = false;
 dati datiTrasmessi;
