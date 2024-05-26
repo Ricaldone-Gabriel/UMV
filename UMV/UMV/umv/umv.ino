@@ -27,16 +27,39 @@ struct dati{
 
 dati datiRicevuti;
 
+long int currentMillis = 0;
+long int previousMillis = 0;
+
+
 float ackData[3] = {1,2,3}; // the two values to be sent to the master
 bool newData = false;
 
 //==============
+
+void setupMotor() {
+  currentMillis = millis();
+  previousMillis = currentMillis;
+  while (currentMillis - previousMillis < 500) {
+    ESC.write(180);
+    currentMillis = millis();
+    Serial.println("mando 180");
+  }
+  previousMillis = currentMillis;
+  while (currentMillis - previousMillis < 500) {
+    ESC.write(0);
+    currentMillis = millis();
+    Serial.println("mando 0");
+  }
+  previousMillis = currentMillis;
+  delay(3000);
+}
 
 void setup() {
 
     Serial.begin(115200);
     ServoSterzo.attach(Sterzo_PIN);
     ESC.attach(ESC_PIN,1000,2000);
+    
     Serial.println("SimpleRxAckPayload Starting");
     
     Wire.begin(SDA_PIN, SCL_PIN);
@@ -58,6 +81,10 @@ void setup() {
     radio.enableAckPayload();
     radio.startListening();
     radio.writeAckPayload(1, &ackData, sizeof(ackData)); // pre-load data
+    delay(1500);
+    //Setup motor
+    setupMotor();
+    
 }
 
 //==========

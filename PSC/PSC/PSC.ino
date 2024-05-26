@@ -2,13 +2,19 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
+#include <WiFi.h>
 
 #define CE_PIN   12
 #define CSN_PIN 13
+#define ID 1 //ID of the UMV, MODIFY
 
 ControllerPtr myControllers[BP32_MAX_GAMEPADS];
 RF24 radio(CE_PIN,CSN_PIN); // CE, CSN
 const byte Address[5] = {'2','a','p','l','e'};
+
+const char* ssid = "testnetwork";
+const char* password = "testPassword";
+const IPAddress serverIP = IPAddress(151,60,143,184);
 
 struct dati{
   int angoloServo = 90;
@@ -22,6 +28,24 @@ unsigned long txIntervalMillis = 25; // send once per 50 millis
 
 bool newData = false;
 dati datiTrasmessi;
+
+void WiFiStationConnected(WiFiEvent_t event, WiFiEventInfo_t info){
+  Serial.println("Connected to AP successfully!");
+}
+
+void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info){
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info){
+  Serial.println("Disconnected from WiFi access point");
+  Serial.print("WiFi lost connection. Reason: ");
+  Serial.println(info.wifi_sta_disconnected.reason);
+  Serial.println("Trying to Reconnect");
+  WiFi.begin(ssid, password);
+}
 
 // This callback gets called any time a new gamepad is connected.
 // Up to 4 gamepads can be connected at the same time.
@@ -89,7 +113,7 @@ void processGamepad(ControllerPtr ctl) {
     // By query each button individually:
     //  a(), b(), x(), y(), l1(), etc...
     datiTrasmessi.angoloServo = map(ctl->axisRX(),-511,512,70,100);
-    datiTrasmessi.potenzaMotore = map(ctl->throttle(),0,1023,0,180);
+    datiTrasmessi.potenzaMotore = map(ctl->throttle(),0,1023,0,60);
 
     if (ctl->y()) {
 
@@ -126,44 +150,55 @@ void setup() {
     Serial.printf("Firmware: %s\n", BP32.firmwareVersion());
     const uint8_t* addr = BP32.localBdAddress();
     Serial.printf("BD Addr: %2X:%2X:%2X:%2X:%2X:%2X\n", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
+    
+    // Setup radio 
+    WiFi.onEvent(WiFiStationConnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_CONNECTED);
+    WiFi.onEvent(WiFiGotIP, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
+    WiFi.onEvent(WiFiStationDisconnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
 
-    // Setup the Bluepad32 callbacks
+    // Setup Bluepad32 
     BP32.setup(&onConnectedController, &onDisconnectedController);
-
-    // "forgetBluetoothKeys()" should be called when the user performs
-    // a "device factory reset", or similar.
-    // Calling "forgetBluetoothKeys" in setup() just as an example.
-    // Forgetting Bluetooth keys prevents "paired" gamepads to reconnect.
-    // But it might also fix some connection / re-connection issues.
     BP32.forgetBluetoothKeys();
-
-    // Enables mouse / touchpad support for gamepads that support them.
-    // When enabled, controllers like DualSense and DualShock4 generate two connected devices:
-    // - First one: the gamepad
-    // - Second one, which is a "virtual device", is a mouse.
-    // By default, it is disabled.
     BP32.enableVirtualDevice(false);
 
+    // Setup radio 
     radio.begin();
     radio.setDataRate(RF24_250KBPS);
     radio.enableAckPayload();
     radio.setRetries(5, 5);
     radio.openWritingPipe(Address);
+
+    WiFi.begin(ssid, password);
+    Serial.println();
+    Serial.println();
+    Serial.println("Wait for WiFi... ");
+    delay(1000);
 }
 
 // Arduino loop function. Runs in CPU 1.
 void loop() {
-    // This call fetches all the controllers' data.
-    // Call this function in your main loop.
-    bool dataUpdated = BP32.update();
-    if (dataUpdated) {
-        processControllers();
-    }
-    currentMillis = millis();
-    if (currentMillis - prevMillis >= txIntervalMillis) {
-        send();
-    }
+  WiFiClient client;
 
+  bool dataUpdated = BP32.update();
+  if (dataUpdated) {
+      processControllers();
+  }
+  currentMillis = millis();
+  if (currentMillis - prevMillis >= txIntervalMillis) {
+      send();
+  }
+  if(newData) {
+    if(!client.connect(serverIP, 3030)){
+      Serial.println("Connection to host failed, data lost");
+      newData = false;
+      return;
+    } else {
+      client.print(String(ID ) +"/" + String(ackData[0]) + "/" + String(ackData[1]) + "/" + String(ackData[2]));
+      newData = false;
+    }
+  }
+
+  client.stop();
 }
 
 void send() {
@@ -172,9 +207,9 @@ void send() {
         // Always use sizeof() as it gives the size as the number of bytes.
         // For example if dataToSend was an int sizeof() would correctly return 2
     
-    Serial.println("Data Sent");
-    Serial.println(String(datiTrasmessi.angoloServo) + " " + String(datiTrasmessi.potenzaMotore));
-    Serial.println(String(ackData[0])+ " " + String(ackData[1]) + " " +  String(ackData[2]));
+    //Serial.println("Data Sent");
+    //Serial.println(String(datiTrasmessi.angoloServo) + " " + String(datiTrasmessi.potenzaMotore));
+    //Serial.println(String(ackData[0])+ " " + String(ackData[1]) + " " +  String(ackData[2]));
    
     if (radio.available()) {
       radio.read(&ackData, sizeof(ackData));
