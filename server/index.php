@@ -110,7 +110,30 @@ window.onload = function() {
         <?php include "./views/partials/navbar.php" ?>
 
         <div class="container-fluid">
-
+            <div class="row justify-content-end p-0">
+                <div class="col-5 sidePanel">
+                    <h1>Titolo</h1>
+                    <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, illum nihil enim fugit
+                        earum nostrum officia repellat aliquam eaque velit esse, labore facere eum sapiente sit vel
+                        fugiat perspiciatis. Blanditiis.</p>
+                </div>
+            </div>
+            <div class="row justify-content-start p-0">
+                <div class="col-5 sidePanel">
+                    <h1>Titolo</h1>
+                    <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, illum nihil enim fugit
+                        earum nostrum officia repellat aliquam eaque velit esse, labore facere eum sapiente sit vel
+                        fugiat perspiciatis. Blanditiis.</p>
+                </div>
+            </div>
+            <div class="row justify-content-end p-0">
+                <div class="col-5 sidePanel">
+                    <h1>Titolo</h1>
+                    <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, illum nihil enim fugit
+                        earum nostrum officia repellat aliquam eaque velit esse, labore facere eum sapiente sit vel
+                        fugiat perspiciatis. Blanditiis.</p>
+                </div>
+            </div>
             <div id="chartContainer1" style="height: 370px; width: 100%;"></div>
             <div id="chartContainer2" style="height: 370px; width: 100%;"></div>
         </div>

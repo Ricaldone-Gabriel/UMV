@@ -22,10 +22,6 @@ struct dati{
 };
 float ackData[3] = {-100,-100,-100};
 
-unsigned long currentMillis;
-unsigned long prevMillis;
-unsigned long txIntervalMillis = 25; // send once per 50 millis
-
 bool newData = false;
 dati datiTrasmessi;
 
@@ -114,24 +110,6 @@ void processGamepad(ControllerPtr ctl) {
     //  a(), b(), x(), y(), l1(), etc...
     datiTrasmessi.angoloServo = map(ctl->axisRX(),-511,512,70,100);
     datiTrasmessi.potenzaMotore = map(ctl->throttle(),0,1023,0,60);
-
-    if (ctl->y()) {
-
-    }
-
-    
-    //if (ctl->x()) {
-        // Some gamepads like DS3, DS4, DualSense, Switch, Xbox One S, Stadia support rumble.
-        // It is possible to set it by calling:
-        // Some controllers have two motors: "strong motor", "weak motor".
-        // It is possible to control them independently.
-    //    ctl->playDualRumble(0 /* delayedStartMs */, 250 /* durationMs */, 0x80 /* weakMagnitude */,
-    //                        0x40 /* strongMagnitude */);
-    //}
-
-    // Another way to query controller data is by getting the buttons() function.
-    // See how the different "dump*" functions dump the Controller info.
-    //dumpGamepad(ctl);
 }
 
 void processControllers() {
@@ -151,6 +129,16 @@ void setup() {
     const uint8_t* addr = BP32.localBdAddress();
     Serial.printf("BD Addr: %2X:%2X:%2X:%2X:%2X:%2X\n", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
     
+    xTaskCreatePinnedToCore (
+      loop2,     // Function to implement the task
+      "loop2",   // Name of the task
+      2000,      // Stack size in bytes
+      NULL,      // Task input parameter
+      0,         // Priority of the task
+      NULL,      // Task handle.
+      0          // Core where the task should run
+    );
+
     // Setup radio 
     WiFi.onEvent(WiFiStationConnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_CONNECTED);
     WiFi.onEvent(WiFiGotIP, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
@@ -175,47 +163,42 @@ void setup() {
     delay(1000);
 }
 
+//Runs in CPU2
+void loop2 (void* pvParameters) {
+  while (1) {
+    bool dataUpdated = BP32.update();
+    if (dataUpdated) {
+      processControllers(); 
+    }
+
+    send();
+  }
+
+}
+
 // Arduino loop function. Runs in CPU 1.
 void loop() {
-  WiFiClient client;
+    WiFiClient client;
 
-  bool dataUpdated = BP32.update();
-  if (dataUpdated) {
-      processControllers();
-  }
-  currentMillis = millis();
-  if (currentMillis - prevMillis >= txIntervalMillis) {
-      send();
-  }
-  if(newData) {
-    if(!client.connect(serverIP, 3030)){
-      Serial.println("Connection to host failed, data lost");
-      newData = false;
-      return;
-    } else {
-      client.print(String(ID ) +"/" + String(ackData[0]) + "/" + String(ackData[1]) + "/" + String(ackData[2]));
-      newData = false;
+    if(newData) {
+      if(!client.connect(serverIP, 3030)){
+        Serial.println("Connection to host failed, data lost");
+        newData = false;
+        return;
+      } else {
+        client.print(String(ID ) +"/" + String(ackData[0]) + "/" + String(ackData[1]) + "/" + String(ackData[2]));
+        newData = false;
+      }
     }
-  }
-
-  client.stop();
+    client.stop();
 }
 
 void send() {
     bool rslt;
     rslt = radio.write( &datiTrasmessi, sizeof(datiTrasmessi) );
-        // Always use sizeof() as it gives the size as the number of bytes.
-        // For example if dataToSend was an int sizeof() would correctly return 2
-    
-    //Serial.println("Data Sent");
-    //Serial.println(String(datiTrasmessi.angoloServo) + " " + String(datiTrasmessi.potenzaMotore));
-    //Serial.println(String(ackData[0])+ " " + String(ackData[1]) + " " +  String(ackData[2]));
-   
+
     if (radio.available()) {
       radio.read(&ackData, sizeof(ackData));
       newData = true;
-    } else {
-      Serial.println("Acknowledge but no data");
     }
-    prevMillis = millis();
  }

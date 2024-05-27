@@ -1,8 +1,17 @@
 body {
     background-color: #2A2A2A;
+    --bs-body-color: aliceblue;
 }
 
 footer{
     color:aliceblue !important;
     background-color: #212529 !important;
+}
+
+.sidePanel {
+    background-color:#1e2226;
+}
+
+.rowHeight {
+    height:100vh;
 }

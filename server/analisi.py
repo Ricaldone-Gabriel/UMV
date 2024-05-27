@@ -28,9 +28,10 @@ while True:
                                 break
                         else:
                                 sql = "INSERT INTO enviroment(UMVId,Temperature,Humidity,Pressure) VALUES (%s,%s,%s,%s)"
-                                val = tuple(dataList)
-                                mycursor.execute(sql,val)
-                                mydb.commit()
+                                if not (dataList[1] == 1 and dataList[2] == 2 and dataList[3] == 3):
+                                        val = tuple(dataList)
+                                        mycursor.execute(sql,val)
+                                        mydb.commit()
 
                         print("Closing connection")
                 client.close()
