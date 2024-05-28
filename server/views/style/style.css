@@ -8,10 +8,54 @@ footer{
     background-color: #212529 !important;
 }
 
+.section {
+    min-height: 100vh; /* Altezza minima 100% viewport height */
+}
+.section img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* L'immagine copre l'area disponibile senza distorsioni */
+}
+.content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.content h2 {
+    font-size: 2rem; /* Dimensione del titolo */
+}
+
+.content p {
+    font-size: 1.2rem; /* Dimensione del testo */
+}
+/* Media queries per dispositivi mobili */
+@media (max-width: 767px) {
+    .content h2 {
+        font-size: 1.5rem; /* Dimensione del titolo su dispositivi mobili */
+    }
+    .content p {
+        font-size: 1rem; /* Dimensione del testo su dispositivi mobili */
+    }
+}
+
+.imgCol {
+    max-height: 50vh !important;
+}
+
+.img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
 .sidePanel {
     background-color:#1e2226;
 }
 
 .rowHeight {
-    height:100vh;
+    height:50vh;
 }
