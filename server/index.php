@@ -1,6 +1,6 @@
     <?php
-
     include("./views/partials/databaseConfig.php");
+    include("./views/partials/generalConfig.php");
 
     $dataPoints1 = array();
     $dataPoints2 = array();
@@ -113,61 +113,94 @@
             <!-- Sezione 1 -->
             <div class="row section no-gutters" id="section1">
                 <div class="col-lg-6 order-lg-1 p-0 d-flex align-items-center">
-                    <img src="https://via.placeholder.com/1000x1000" alt="Immagine 1">
+                    <img src="https://via.placeholder.com/1000x1000" class="img img-fluid" alt="Immagine 1">
                 </div>
                 <div class="col-lg-6 order-lg-2 d-flex align-items-center content">
                     <div>
-                        <h2>Sezione 1</h2>
-                        <p>Testo della prima sezione. Questa è una descrizione della sezione 1.</p>
+                        <?php
+                        switch ($_SESSION["language"]) {
+                            case "ita":
+                                include("./views/partials/ita/capolavoro.php");
+                                break;
+                            case "eng":
+                                include("./views/partials/eng/capolavoro.php");
+                                break;
+                        } ?>
                     </div>
                 </div>
             </div>
             <!-- Sezione 2 -->
             <div class="row section no-gutters" id="section2">
                 <div class="col-lg-6 order-lg-2 p-0 d-flex align-items-center">
-                    <img src="https://via.placeholder.com/1000x1000" alt="Immagine 2">
+                    <img src="./views/images/studio.avif" class="img img-fluid" alt="Immagine 2">
                 </div>
                 <div class="col-lg-6 order-lg-1 d-flex align-items-center content">
                     <div>
-                        <h2>Sezione 2</h2>
-                        <p>Testo della seconda sezione. Questa è una descrizione della sezione 2.</p>
+                        <?php
+                        switch ($_SESSION["language"]) {
+                            case "ita":
+                                include("./views/partials/ita/imparato.php");
+                                break;
+                            case "eng":
+                                include("./views/partials/eng/imparato.php");
+                                break;
+                        } ?>
                     </div>
                 </div>
             </div>
             <!-- Sezione 3 -->
             <div class="row section no-gutters" id="section3">
-                <div class="col-lg-6 order-lg-1 p-0 d-flex align-items-center">
-                    <img src="https://via.placeholder.com/1000x1000" alt="Immagine 3">
+                <div class="col-lg-6 order-lg-1 p-0 d-flex align-items-center ">
+                    <img src="./views/images/tecnico.jpg" class="img img-fluid" alt="Immagine 3">
                 </div>
                 <div class="col-lg-6 order-lg-2 d-flex align-items-center content">
                     <div>
-                        <h2>Sezione 3</h2>
-                        <p>Testo della terza sezione. Questa è una descrizione della sezione 3.</p>
+                        <?php
+                        switch ($_SESSION["language"]) {
+                            case "ita":
+                                include("./views/partials/ita/tecnico.php");
+                                break;
+                            case "eng":
+                                include("./views/partials/eng/tecnico.php");
+                                break;
+                        } ?>
                     </div>
                 </div>
             </div>
-            <!-- Sezione 4 -->
-            <div class="row section no-gutters" id="section4">
-                <div class="col-lg-6 order-lg-2 p-0 d-flex align-items-center">
-                    <img src="https://via.placeholder.com/1000x1000" alt="Immagine 4">
-                </div>
-                <div class="col-lg-6 order-lg-1 d-flex align-items-center content">
+            <!-- spaziatore -->
+            <div class="row mt-5" style="height:50px; background-color:#212529">
+                <div class="col"> </div>
+            </div>
+            <!-- Grafici -->
+            <div class="row no-gutters my-5" id="section4">
+                <div class="col-lg-12 d-flex flex-column align-items-center content">
                     <div>
-                        <h2>Sezione 4</h2>
-                        <p>Testo della quarta sezione. Questa è una descrizione della sezione 4.</p>
+                        <?php
+                        switch ($_SESSION["language"]) {
+                            case "ita":
+                                include("./views/partials/ita/grafici.php");
+                                break;
+                            case "eng":
+                                include("./views/partials/eng/grafici.php");
+                                break;
+                        } ?>
+
+                    </div>
+                    <div class="row w-100">
+                        <div class="col-lg-6 d-flex justify-content-center">
+                            <div id="chartContainer1" style="height: 300px; width: 100%;"></div>
+                        </div>
+                        <div class="col-lg-6 d-flex justify-content-center">
+                            <div id="chartContainer2" style="height: 300px; width: 100%;"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row" id="section5">
-
-                <div id="chartContainer1" style="height: 370px; width: 100%;"></div>
-                <div id="chartContainer2" style="height: 370px; width: 100%;"></div>
             </div>
         </div>
         <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
         <script>
             let currentSection = 1;
-            const totalSections = 5;
+            const totalSections = 4;
 
             function scrollToSection(sectionId) {
                 document.getElementById(sectionId).scrollIntoView({
@@ -196,6 +229,6 @@
             });
         </script>
         <?php include "./views/partials/footer.php" ?>
-    </body>
+
 
     </html>

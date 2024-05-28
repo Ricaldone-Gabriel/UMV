@@ -3,41 +3,61 @@ body {
     --bs-body-color: aliceblue;
 }
 
-footer{
-    color:aliceblue !important;
+footer {
+    color: aliceblue !important;
     background-color: #212529 !important;
 }
 
 .section {
-    min-height: 100vh; /* Altezza minima 100% viewport height */
+    min-height: 100vh !important;
+    /* Altezza minima 100% viewport height */
+    max-width: 100vw;
 }
+
 .section img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* L'immagine copre l'area disponibile senza distorsioni */
+    display: block;
+    object-fit: cover;
+    /* L'immagine copre l'area disponibile senza distorsioni */
 }
-.content {
-    padding: 20px;
+
+.chart-container {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
+    justify-content: space-around;
+    align-items: center;
+    height: 70%;
+}
+
+.chart-container div {
+    width: 45%;
+}
+
+.chart {
+    width: 100%;
+    height: 370px;
 }
 
 .content h2 {
-    font-size: 2rem; /* Dimensione del titolo */
+    font-size: 2rem;
+    /* Dimensione del titolo */
 }
 
 .content p {
-    font-size: 1.2rem; /* Dimensione del testo */
+    font-size: 1.2rem;
+    /* Dimensione del testo */
 }
+
 /* Media queries per dispositivi mobili */
 @media (max-width: 767px) {
     .content h2 {
-        font-size: 1.5rem; /* Dimensione del titolo su dispositivi mobili */
+        font-size: 1.5rem;
+        /* Dimensione del titolo su dispositivi mobili */
     }
+
     .content p {
-        font-size: 1rem; /* Dimensione del testo su dispositivi mobili */
+        font-size: 1rem;
+        /* Dimensione del testo su dispositivi mobili */
     }
 }
 
@@ -53,9 +73,9 @@ footer{
 
 
 .sidePanel {
-    background-color:#1e2226;
+    background-color: #1e2226;
 }
 
 .rowHeight {
-    height:50vh;
+    height: 50vh;
 }
