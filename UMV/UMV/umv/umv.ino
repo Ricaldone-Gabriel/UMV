@@ -12,7 +12,7 @@
 #define ESC_PIN 27
 #define SDA_PIN 26
 #define SCL_PIN 25
-#define DHT11PIN 16
+#define DHT11PIN 17
 
 BlueDot_BME280 bme280 = BlueDot_BME280();
 DHT dht(DHT11PIN, DHT11);
@@ -102,11 +102,12 @@ void loop()
 
 void getData()
 {
+  
   if (radio.available())
   {
     radio.read(&datiRicevuti, sizeof(datiRicevuti));
     updateReplyData();
-    // showData();
+    showData();
     newData = true;
   }
 }
@@ -128,7 +129,7 @@ void useData()
 }
 
 //================
-/*
+
 void showData() {
   Serial.print("Data received ");
   Serial.println(String(datiRicevuti.angoloServo) + " " + String(datiRicevuti.potenzaMotore));
@@ -139,7 +140,7 @@ void showData() {
   Serial.print(", ");
   Serial.println(ackData[2]);
 }
-*/
+
 //================
 // T,H,P
 void updateReplyData()
